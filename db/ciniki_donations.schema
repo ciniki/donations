@@ -31,6 +31,8 @@
 # property_description:	The description of the property donated.	**future**
 # appraised_by:			The person or company who appraised the property. **future**
 # appraiser_address:	The address of the appraiser. **future**
+#
+# notes:			Any notes about the donation.
 # 
 # date_added:		The UTC date and time the record was added.
 # last_updated:		The UTC date and time the record was last updated.
@@ -57,8 +59,10 @@ create table ciniki_donations (
 	property_description varchar(250) not null,
 	appraised_by varchar(250) not null,
 	appraiser_address varchar(250) not null,
+	notes varchar(6000) not null,
 	date_added datetime not null,
 	last_updated datetime not null,
 	primary key (id),
+	unique index (business_id, receipt_number),
 	index business_uuid (business_id, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.01';
