@@ -51,7 +51,7 @@ function ciniki_donations_donationDelete(&$ciniki) {
 		return $rc;
 	}
 	if( !isset($rc['donation']) ) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'888', 'msg'=>'The donation does not exist'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2152', 'msg'=>'The donation does not exist'));
 	}
 	$donation_uuid = $rc['donation']['uuid'];
 
