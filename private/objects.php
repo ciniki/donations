@@ -19,6 +19,7 @@ function ciniki_donations_objects($ciniki) {
 		'fields'=>array(
 			'customer_id'=>array('ref'=>'ciniki.customers.customer'),
 			'receipt_number'=>array(),
+			'category'=>array('default'=>''),
 			'name'=>array(),
 			'address1'=>array(),
 			'address2'=>array(),

@@ -22,6 +22,7 @@ function ciniki_donations_donationList($ciniki) {
 	$rc = ciniki_core_prepareArgs($ciniki, 'no', array(
 		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
 		'year'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'year'), 
+		'category'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'category'), 
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -76,6 +77,29 @@ function ciniki_donations_donationList($ciniki) {
 	}
 
 	//
+	// Get the categories
+	//
+	$strsql = "SELECT DISTINCT category "
+		. "FROM ciniki_donations "
+		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "ORDER BY category DESC "
+		. "";
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQueryList');
+	$rc = ciniki_core_dbQueryList($ciniki, $strsql, 'ciniki.donations', 'categories', 'category');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	$categories = array();
+	if( isset($rc['categories']) ) {
+		$categories = $rc['categories'];
+	}
+
+	if( (!isset($args['year']) || $args['year'] == '') && count($years) > 0 ) {
+		$args['year'] = $years[0];
+	}
+
+
+	//
 	// Load the donations for the year
 	//
 	$donations = array();
@@ -83,6 +107,7 @@ function ciniki_donations_donationList($ciniki) {
 	if( isset($args['year']) && $args['year'] != '' ) {
 		$strsql = "SELECT id, "
 			. "receipt_number, "
+			. "category, "
 			. "name, "
 			. "DATE_FORMAT(date_received, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS date_received, "
 			. "amount "
@@ -90,12 +115,16 @@ function ciniki_donations_donationList($ciniki) {
 			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. "AND date_received >= '" . ciniki_core_dbQuote($ciniki, $args['year']) . "-01-01' "
 			. "AND date_received < '" . ciniki_core_dbQuote($ciniki, ($args['year']+1)) . "-01-01' "
-			. "ORDER BY ciniki_donations.date_received DESC "
+			. "";
+		if( isset($args['category']) && $args['category'] != '' ) {
+			$strsql .= "AND category = '" . ciniki_core_dbQuote($ciniki, $args['category']) . "' ";
+		}
+		$strsql .= "ORDER BY ciniki_donations.date_received DESC "
 			. "";
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 		$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.donations', array(
 			array('container'=>'donations', 'fname'=>'id', 'name'=>'donation',
-				'fields'=>array('id', 'receipt_number', 'name', 'date_received', 'amount')),
+				'fields'=>array('id', 'receipt_number', 'category', 'name', 'date_received', 'amount')),
 				));
 		if( $rc['stat'] != 'ok' ) {
 			return $rc;
@@ -111,6 +140,6 @@ function ciniki_donations_donationList($ciniki) {
 	}
 	$total_amount_display = numfmt_format_currency($intl_currency_fmt, $total_amount, $intl_currency);
 
-	return array('stat'=>'ok', 'years'=>implode(',', $years), 'donations'=>$donations, 'total_amount'=>$total_amount, 'total_amount_display'=>$total_amount_display);
+	return array('stat'=>'ok', 'years'=>implode('::', $years), 'categories'=>implode('::', $categories), 'donations'=>$donations, 'total_amount'=>$total_amount, 'total_amount_display'=>$total_amount_display);
 }
 ?>

@@ -7,12 +7,16 @@ function ciniki_donations_main() {
 			'ciniki_donations_main', 'menu',
 			'mc', 'medium', 'sectioned', 'ciniki.donations.main.menu');
 		this.menu.year = '';
+		this.menu.category = '';
 		this.menu.data = {};
 		this.menu.sections = {
 			'years':{'label':'', 'type':'paneltabs', 'selected':'', 'tabs':{}},
+			'categories':{'label':'', 'type':'paneltabs', 'visible':'no', 'selected':'', 'joined':'no', 'tabs':{}},
 			'donations':{'label':'', 'type':'simplegrid', 'num_cols':5,
 				'sortable':'yes',
 				'headerValues':['Receipt #', 'Date', 'Name', 'Amount'],
+				'dataMaps':['receipt_number', 'date_received', 'name', 'amount_display'],
+				'sortMaps':['receipt_number', 'date_received', 'name', 'amount'],
 				'cellClasses':['', '', '', 'alignright'],
 				'sortTypes':['number', 'date', 'text', 'altnumber'],
 				'noData':'No Donations Found',
@@ -25,36 +29,20 @@ function ciniki_donations_main() {
 			return this.data[s];
 		};
 		this.menu.cellValue = function(s, i, j, d) {
-			if( s == 'donations' ) {
-				switch(j) {
-					case 0: return d.donation.receipt_number;
-					case 1: return d.donation.date_received;
-					case 2: return d.donation.name;
-					case 3: return d.donation.amount_display;
-				}
-			}
+			if( s == 'donations' ) { return d.donation[this.sections[s].dataMaps[j]]; }
 			return '';
 		};
 		this.menu.cellSortValue = function(s, i, j, d) {
-			switch(j) {
-				case 0: return d.donation.receipt_number;
-				case 1: return d.donation.date_received;
-				case 2: return d.donation.name;
-				case 3: return d.donation.amount;
-			}
+			if( s == 'donations' ) { return d.donation[this.sections[s].sortMaps[j]]; }
 		};
 		this.menu.rowFn = function(s, i, d) {
 			return 'M.ciniki_donations_main.donationEdit(\'M.ciniki_donations_main.showMenu();\',\'' + d.donation.id + '\');';
 		};
 		this.menu.footerValue = function(s, i, d) {
-			if( this.data.totals != null ) {
-				switch(i) {
-					case 0: return '';
-					case 1: return '';
-					case 2: return '';
-					case 3: return this.data.total_amount_display;
-				}
+			if( this.data['total_' + this.sections[s].dataMaps[i]] != null ) {
+				return this.data['total_' + this.sections[s].dataMaps[i]];
 			}
+			return '';
 		};
 		this.menu.footerClass = function(s, i, d) {
 			if( i == 3 ) { return 'alignright'; }
@@ -87,6 +75,7 @@ function ciniki_donations_main() {
 				'country':{'label':'Country', 'type':'text', 'size':'small'},
 				}},
 			'details2':{'label':'', 'fields':{
+				'category':{'label':'Category', 'type':'text', 'livesearch':'yes', 'livesearchempty':'yes'},
 				'date_received':{'label':'Date Received', 'type':'date', 'size':'small'},
 				'amount':{'label':'Amount', 'type':'text', 'size':'small'},
 				'date_issued':{'label':'Date Issued', 'type':'date', 'size':'small'},
@@ -104,6 +93,27 @@ function ciniki_donations_main() {
 		this.donation.fieldValue = function(s, i, d) {
 			if( this.data != null && this.data[i] != null ) { return this.data[i]; }
 			return '';
+		};
+		this.donation.liveSearchCb = function(s, i, value) {
+			if( i == 'category' ) {
+				var rsp = M.api.getJSONBgCb('ciniki.donations.donationSearchField', {'business_id':M.curBusinessID, 'field':i, 'start_needle':value, 'limit':15},
+					function(rsp) {
+						M.ciniki_donations_main.donation.liveSearchShow(s, i, M.gE(M.ciniki_donations_main.donation.panelUID + '_' + i), rsp.results);
+					});
+			}
+		};
+		this.donation.liveSearchResultValue = function(s, f, i, j, d) {
+			if( f == 'category' && d.result != null ) { return d.result.name; }
+			return '';
+		};
+		this.donation.liveSearchResultRowFn = function(s, f, i, j, d) { 
+			if( f == 'category' && d.result != null ) {
+				return 'M.ciniki_donations_main.donation.updateField(\'' + s + '\',\'' + f + '\',\'' + escape(d.result.name) + '\');';
+			}
+		};
+		this.donation.updateField = function(s, fid, result) {
+			M.gE(this.panelUID + '_' + fid).value = unescape(result);
+			this.removeLiveSearch(s, fid);
 		};
 		this.donation.fieldHistoryArgs = function(s, i) {
 			return {'method':'ciniki.donations.donationHistory', 'args':{'business_id':M.curBusinessID, 'field':i}};
@@ -130,16 +140,34 @@ function ciniki_donations_main() {
 			return false;
 		} 
 
+		if( M.curBusiness.modules['ciniki.donations'].flags != null
+			&& (M.curBusiness.modules['ciniki.donations'].flags&0x01) > 0 ) {
+			this.menu.sections.categories.selected = '';
+			this.menu.sections.donations.headerValues = ['Receipt #', 'Date', 'Category', 'Name', 'Amount'];
+			this.menu.sections.donations.dataMaps = ['receipt_number', 'date_received', 'category', 'name', 'amount_display'];
+			this.menu.sections.donations.sortMaps = ['receipt_number', 'date_received', 'category', 'name', 'amount'];
+			this.donation.sections.details2.fields.category.active = 'yes';
+		} else {
+			this.menu.sections.categories.selected = '';
+			this.menu.sections.donations.headerValues = ['Receipt #', 'Date', 'Name', 'Amount'];
+			this.menu.sections.donations.dataMaps = ['receipt_number', 'date_received', 'name', 'amount_display'];
+			this.menu.sections.donations.sortMaps = ['receipt_number', 'date_received', 'name', 'amount'];
+			this.donation.sections.details2.fields.category.active = 'no';
+		}
+
 		this.menu.year = '';
 		this.showMenu(cb);
 	};
 
-	this.showMenu = function(cb, year) {
-		if( year != null ) { this.menu.year = year; this.menu.sections.years.selected = year; }
+	this.showMenu = function(cb, year, category) {
+		if( year != null ) { this.menu.year = year; this.menu.sections.years.selected = '_' + year; }
+		if( category != null ) { this.menu.category = category; this.menu.sections.categories.selected = category; }
 		this.menu.sections.years.tabs = {};
 		this.menu.sections.years.visible = 'no';
+		this.menu.sections.categories.tabs = {};
+		this.menu.sections.categories.visible = 'no';
 		M.api.getJSONCb('ciniki.donations.donationList', {'business_id':M.curBusinessID,
-			'year':this.menu.year}, function(rsp) {
+			'year':this.menu.year, 'category':this.menu.category}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
 					return false;
@@ -147,13 +175,23 @@ function ciniki_donations_main() {
 				var p = M.ciniki_donations_main.menu;
 				p.data = rsp;
 				if( rsp.years != '' ) {
-					var years = rsp.years.split(',');
+					var years = rsp.years.split('::');
 					p.sections.years.visible = 'yes';
 					for(i in years) {
 						if( p.sections.years.selected == '' ) {
-							p.sections.years.selected = years[i];
+							p.sections.years.selected = '_' + years[i];
 						}
-						p.sections.years.tabs[years[i]] = {'label':years[i], 'fn':'M.ciniki_donations_main.showMenu(null,\'' + years[i] + '\');'};
+						p.sections.years.tabs['_' + years[i]] = {'label':years[i], 'fn':'M.ciniki_donations_main.showMenu(null,\'' + years[i] + '\');'};
+					}
+				}
+				if( (M.curBusiness.modules['ciniki.donations'].flags&0x01) > 0 && rsp.categories != '' ) {
+					var categories = rsp.categories.split('::');
+					if( categories.length > 1 ) {			// Only show if more than one category
+						p.sections.categories.visible = 'yes';
+						p.sections.categories.tabs[''] = {'label':'All', 'fn':'M.ciniki_donations_main.showMenu(null,null,\'\');'};
+						for(i in categories) {
+							p.sections.categories.tabs[categories[i]] = {'label':categories[i], 'fn':'M.ciniki_donations_main.showMenu(null,null,\'' + categories[i] + '\');'};
+						}
 					}
 				}
 				p.refresh();

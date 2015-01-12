@@ -34,6 +34,7 @@ function ciniki_donations_donationLoad($ciniki, $business_id, $donation_id) {
 	$strsql = "SELECT ciniki_donations.id, "
 		. "ciniki_donations.customer_id, "
 		. "ciniki_donations.receipt_number, "
+		. "ciniki_donations.category, "
 		. "ciniki_donations.name, "
 		. "ciniki_donations.address1, "
 		. "ciniki_donations.address2, "
@@ -60,7 +61,8 @@ function ciniki_donations_donationLoad($ciniki, $business_id, $donation_id) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.donations', array(
 		array('container'=>'donations', 'fname'=>'id', 'name'=>'donation',
-			'fields'=>array('id', 'receipt_number', 'name', 'address1', 'address2', 'city', 'province', 'postal', 'country',
+			'fields'=>array('id', 'receipt_number', 'category', 'name', 
+				'address1', 'address2', 'city', 'province', 'postal', 'country',
 				'date_received', 'donation_year', 'amount', 'date_issued', 'location_issued',
 				'advantage_amount', 'advantage_description',
 				'property_description', 'appraised_by', 'appraiser_address', 'notes')),

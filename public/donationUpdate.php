@@ -28,6 +28,7 @@ function ciniki_donations_donationUpdate(&$ciniki) {
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
         'donation_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Donation'), 
 		'receipt_number'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Receipt Number'), 
+		'category'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Category'), 
 		'name'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Name'), 
 		'address1'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Address Line 1'), 
 		'address2'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Address Line 2'), 
