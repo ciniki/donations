@@ -56,7 +56,6 @@ function ciniki_donations_templates_canadaDefault(&$ciniki, $business_id, $donat
 				$available_ratio = $img_width/$this->header_height;
 				// Check if the ratio of the image will make it too large for the height,
 				// and scaled based on either height or width.
-				error_log($this->getY());
 				if( $available_ratio < $image_ratio ) {
 					$this->Image('@'.$this->header_image->getImageBlob(), 15, $this->getY()+7, 
 						$img_width, 0, 'JPEG', '', 'L', 2, '150');
