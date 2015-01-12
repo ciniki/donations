@@ -222,6 +222,7 @@ function ciniki_donations_main() {
 					var p = M.ciniki_donations_main.donation;
 					p.customer_id = rsp.donation.customer_id;
 					p.data = rsp.donation;
+					p.data.amount = p.data.amount_display;
 					p.refresh();
 					p.show();
 				});
