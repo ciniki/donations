@@ -202,7 +202,7 @@ function ciniki_donations_main() {
 	this.downloadExcel = function() {
 		var args = {'business_id':M.curBusinessID, 'output':'excel'};
 		if( this.menu.year != null ) { args.year = this.menu.year; }
-		window.open(M.api.getUploadURL('ciniki.donations.donationList', args));
+		M.api.openFile('ciniki.donations.donationList', args);
 	};
 
 	this.donationEdit = function(cb, did, cid) {
@@ -302,7 +302,7 @@ function ciniki_donations_main() {
 	this.donationReceipt = function() {
 		if( this.donation.donation_id > 0 ) {
 			var args = {'business_id':M.curBusinessID, 'donation_id':this.donation.donation_id, 'output':'pdf'};
-			window.open(M.api.getUploadURL('ciniki.donations.donationReceipt', args));
+			M.api.openPDF('ciniki.donations.donationReceipt', args);
 		} else {
 			var c = this.donation.serializeForm('yes');
 			M.api.postJSONCb('ciniki.donations.donationAdd', {'business_id':M.curBusinessID,
@@ -315,7 +315,7 @@ function ciniki_donations_main() {
 					p.donation_id = rsp.id;
 					p.data = rsp.donation;
 					var args = {'business_id':M.curBusinessID, 'donation_id':rsp.id, 'output':'pdf'};
-					window.open(M.api.getUploadURL('ciniki.donations.donationReceipt', args));
+					M.api.openPDF('ciniki.donations.donationReceipt', args);
 				});
 		}
 	};
