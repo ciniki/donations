@@ -1,6 +1,6 @@
 #
 # Description
-# ===========
+# ----------
 # This tables stores the settings for the donations module.
 #
 # receipt-default-template:			The template to use for invoices.  If none is specified, the 
@@ -25,7 +25,7 @@
 # default-location-issued:			The default location for receipts to be issued.
 #
 # Fields
-# ======
+# ------
 # business_id:	The id of the business the detail is for.
 # detail_key:	The unique key for the detail.
 # detail_value:	The value stored for this key.
