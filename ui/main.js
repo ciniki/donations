@@ -116,7 +116,7 @@ function ciniki_donations_main() {
 			this.removeLiveSearch(s, fid);
 		};
 		this.donation.fieldHistoryArgs = function(s, i) {
-			return {'method':'ciniki.donations.donationHistory', 'args':{'business_id':M.curBusinessID, 'field':i}};
+			return {'method':'ciniki.donations.donationHistory', 'args':{'business_id':M.curBusinessID, 'donation_id':this.donation_id, 'field':i}};
 		};
 		this.donation.addButton('save', 'Save', 'M.ciniki_donations_main.donationSave();');
 		this.donation.addClose('Cancel');
