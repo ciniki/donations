@@ -5,68 +5,68 @@
 #
 # Fields
 # ------
-# id:				The ID assigned to the event.
-# uuid:				The Universal Unique ID.
-# business_id:		The business the event is attached to.
+# id:               The ID assigned to the event.
+# uuid:             The Universal Unique ID.
+# business_id:      The business the event is attached to.
 #
-# customer_id:		The customer the donation is attached to, or zero if no longer in customers module.
+# customer_id:      The customer the donation is attached to, or zero if no longer in customers module.
 #
-# receipt_number:	The number of the receipt.
+# receipt_number:   The number of the receipt.
 #
-# category:			The category for the donation.
+# category:         The category for the donation.
 #
-# name:				The name of the donor.
-# address1:			The first line of the address.
-# address2:			The second line of the address.
-# city:				The city for the address.
-# province:			The province or state for the address.
-# postal:			The postal or zip code
-# country:			The country for the address.
+# name:             The name of the donor.
+# address1:         The first line of the address.
+# address2:         The second line of the address.
+# city:             The city for the address.
+# province:         The province or state for the address.
+# postal:           The postal or zip code
+# country:          The country for the address.
 #
-# date_received:	The date of the donation.
-# amount:			The amount of the donation.
-# date_issued:		The date the receipt was issued to the donor.
-# location_issued:	The location the receipt was issued.
+# date_received:    The date of the donation.
+# amount:           The amount of the donation.
+# date_issued:      The date the receipt was issued to the donor.
+# location_issued:  The location the receipt was issued.
 #
-# advantage_amount:	The amount of all benefits provided to the donar. **future**
-# advantage_description:	The description of the benefits. **future**
+# advantage_amount: The amount of all benefits provided to the donar. **future**
+# advantage_description:    The description of the benefits. **future**
 #
-# property_description:	The description of the property donated.	**future**
-# appraised_by:			The person or company who appraised the property. **future**
-# appraiser_address:	The address of the appraiser. **future**
+# property_description: The description of the property donated.    **future**
+# appraised_by:         The person or company who appraised the property. **future**
+# appraiser_address:    The address of the appraiser. **future**
 #
-# notes:			Any notes about the donation.
+# notes:            Any notes about the donation.
 # 
-# date_added:		The UTC date and time the record was added.
-# last_updated:		The UTC date and time the record was last updated.
+# date_added:       The UTC date and time the record was added.
+# last_updated:     The UTC date and time the record was last updated.
 #
 create table ciniki_donations (
-	id int not null auto_increment,
-	uuid char(36) not null,
-	business_id int not null,
-	customer_id int not null,
-	receipt_number varchar(20) not null,
-	category varchar(150) not null,
-	name varchar(150) not null,
-	address1 varchar(250) not null,
-	address2 varchar(250) not null,
-	city varchar(100) not null,
-	province varchar(100) not null,
-	postal varchar(10) not null,
-	country varchar(50) not null,
-	date_received date not null,
-	amount decimal(19,4) not null,
-	date_issued date not null,
-	location_issued varchar(100) not null,
-	advantage_amount decimal(19,4) not null,
-	advantage_description varchar(250) not null,
-	property_description varchar(250) not null,
-	appraised_by varchar(250) not null,
-	appraiser_address varchar(250) not null,
-	notes varchar(6000) not null,
-	date_added datetime not null,
-	last_updated datetime not null,
-	primary key (id),
-	unique index (business_id, receipt_number),
-	index business_uuid (business_id, uuid, last_updated)
+    id int not null auto_increment,
+    uuid char(36) not null,
+    business_id int not null,
+    customer_id int not null,
+    receipt_number varchar(20) not null,
+    category varchar(150) not null,
+    name varchar(150) not null,
+    address1 varchar(250) not null,
+    address2 varchar(250) not null,
+    city varchar(100) not null,
+    province varchar(100) not null,
+    postal varchar(10) not null,
+    country varchar(50) not null,
+    date_received date not null,
+    amount decimal(19,4) not null,
+    date_issued date not null,
+    location_issued varchar(100) not null,
+    advantage_amount decimal(19,4) not null,
+    advantage_description varchar(250) not null,
+    property_description varchar(250) not null,
+    appraised_by varchar(250) not null,
+    appraiser_address varchar(250) not null,
+    notes varchar(6000) not null,
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    unique index (business_id, receipt_number),
+    index business_uuid (business_id, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.01';

@@ -8,8 +8,8 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:		The ID of the business the donation is attached to.
-// donation_id:		The ID of the donation to get the details for.
+// business_id:     The ID of the business the donation is attached to.
+// donation_id:     The ID of the donation to get the details for.
 // 
 // Returns
 // -------
@@ -37,9 +37,9 @@ function ciniki_donations_donationGet($ciniki) {
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
-	$modules = $rc['modules'];
+    $modules = $rc['modules'];
 
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'donations', 'private', 'donationLoad');
-	return ciniki_donations_donationLoad($ciniki, $args['business_id'], $args['donation_id']);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'donations', 'private', 'donationLoad');
+    return ciniki_donations_donationLoad($ciniki, $args['business_id'], $args['donation_id']);
 }
 ?>
