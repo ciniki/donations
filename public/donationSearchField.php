@@ -62,7 +62,7 @@ function ciniki_donations_donationSearchField($ciniki) {
     //
     if( $args['field'] != 'category'
         ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2153', 'msg'=>'Unvalid search field'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.donations.6', 'msg'=>'Unvalid search field'));
     }
     //
     // Get the number of faqs in each status for the business, 

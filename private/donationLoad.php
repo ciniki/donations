@@ -71,7 +71,7 @@ function ciniki_donations_donationLoad($ciniki, $business_id, $donation_id) {
         return $rc;
     }
     if( !isset($rc['donations']) || !isset($rc['donations'][0]) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'2160', 'msg'=>'Unable to find donation'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.donations.4', 'msg'=>'Unable to find donation'));
     }
     $donation = $rc['donations'][0]['donation'];
 
