@@ -5,7 +5,7 @@ function ciniki_donations_main() {
         //
         this.menu = new M.panel('Donation',
             'ciniki_donations_main', 'menu',
-            'mc', 'medium', 'sectioned', 'ciniki.donations.main.menu');
+            'mc', 'xlarge', 'sectioned', 'ciniki.donations.main.menu');
         this.menu.year = '';
         this.menu.category = '';
         this.menu.data = {};
