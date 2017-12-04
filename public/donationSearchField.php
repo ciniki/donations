@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business to search.
+// tnid:     The ID of the tenant to search.
 // field:           The field to search.  Possible fields available to search are:
 //
 //                  - category
@@ -37,7 +37,7 @@ function ciniki_donations_donationSearchField($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'field'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Field'),
         'start_needle'=>array('required'=>'yes', 'blank'=>'yes', 'name'=>'Search'), 
         'limit'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Limit'), 
@@ -49,10 +49,10 @@ function ciniki_donations_donationSearchField($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'donations', 'private', 'checkAccess');
-    $rc = ciniki_donations_checkAccess($ciniki, $args['business_id'], 'ciniki.donations.donationSearchField', 0); 
+    $rc = ciniki_donations_checkAccess($ciniki, $args['tnid'], 'ciniki.donations.donationSearchField', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -65,7 +65,7 @@ function ciniki_donations_donationSearchField($ciniki) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.donations.6', 'msg'=>'Unvalid search field'));
     }
     //
-    // Get the number of faqs in each status for the business, 
+    // Get the number of faqs in each status for the tenant, 
     // if no rows found, then return empty array
     //
     if( $args['field'] == 'price' ) {
@@ -74,7 +74,7 @@ function ciniki_donations_donationSearchField($ciniki) {
         $strsql = "SELECT DISTINCT " . $args['field'] . " AS name ";
     }
     $strsql .= "FROM ciniki_donations "
-        . "WHERE ciniki_donations.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_donations.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND (" . $args['field']  . " LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
             . "AND " . $args['field'] . " <> '' "
             . ") "

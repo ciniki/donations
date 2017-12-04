@@ -2,13 +2,13 @@
 //
 // Description
 // -----------
-// This method will delete a donation from the business.
+// This method will delete a donation from the tenant.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business the donation is attached to.
+// tnid:         The ID of the tenant the donation is attached to.
 // donation_id:         The ID of the donation to be removed.
 //
 // Returns
@@ -21,7 +21,7 @@ function ciniki_donations_donationDelete(&$ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'donation_id'=>array('required'=>'yes', 'default'=>'', 'blank'=>'yes', 'name'=>'Delete'), 
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -30,10 +30,10 @@ function ciniki_donations_donationDelete(&$ciniki) {
     $args = $rc['args'];
     
     //
-    // Check access to business_id as owner
+    // Check access to tnid as owner
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'donations', 'private', 'checkAccess');
-    $ac = ciniki_donations_checkAccess($ciniki, $args['business_id'], 'ciniki.donations.donationDelete');
+    $ac = ciniki_donations_checkAccess($ciniki, $args['tnid'], 'ciniki.donations.donationDelete');
     if( $ac['stat'] != 'ok' ) {
         return $ac;
     }
@@ -42,7 +42,7 @@ function ciniki_donations_donationDelete(&$ciniki) {
     // Get the uuid of the donation to be deleted
     //
     $strsql = "SELECT uuid FROM ciniki_donations "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['donation_id']) . "' "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
@@ -72,7 +72,7 @@ function ciniki_donations_donationDelete(&$ciniki) {
     //
     // Remove the donation
     //
-    $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.donations.donation', 
+    $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.donations.donation', 
         $args['donation_id'], $donation_uuid, 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.donations');
@@ -88,11 +88,11 @@ function ciniki_donations_donationDelete(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'donations');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'donations');
 
     return array('stat'=>'ok');
 }

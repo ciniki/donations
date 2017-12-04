@@ -7,12 +7,12 @@
 // Arguments
 // ---------
 // ciniki:
-// business_id:     The ID of the business to get donations for.
+// tnid:     The ID of the tenant to get donations for.
 //
 // Returns
 // -------
 //
-function ciniki_donations_hooks_uiSettings($ciniki, $business_id, $args) {
+function ciniki_donations_hooks_uiSettings($ciniki, $tnid, $args) {
 
     //
     // Setup the default response
@@ -22,7 +22,7 @@ function ciniki_donations_hooks_uiSettings($ciniki, $business_id, $args) {
     //
     // Check permissions for what menu items should be available
     //
-    if( isset($ciniki['business']['modules']['ciniki.donations'])
+    if( isset($ciniki['tenant']['modules']['ciniki.donations'])
         && (isset($args['permissions']['owners'])
             || isset($args['permissions']['employees'])
             || isset($args['permissions']['resellers'])
@@ -37,7 +37,7 @@ function ciniki_donations_hooks_uiSettings($ciniki, $business_id, $args) {
         $rsp['menu_items'][] = $menu_item;
     } 
 
-    if( isset($ciniki['business']['modules']['ciniki.donations'])
+    if( isset($ciniki['tenant']['modules']['ciniki.donations'])
         && (isset($args['permissions']['owners'])
             || isset($args['permissions']['resellers'])
             || ($ciniki['session']['user']['perms']&0x01) == 0x01

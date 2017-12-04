@@ -1,13 +1,13 @@
 #
 # Description
 # -----------
-# The donations table stores the donations made to a business.
+# The donations table stores the donations made to a tenant.
 #
 # Fields
 # ------
 # id:               The ID assigned to the event.
 # uuid:             The Universal Unique ID.
-# business_id:      The business the event is attached to.
+# tnid:             The tenant the event is attached to.
 #
 # customer_id:      The customer the donation is attached to, or zero if no longer in customers module.
 #
@@ -43,7 +43,7 @@
 create table ciniki_donations (
     id int not null auto_increment,
     uuid char(36) not null,
-    business_id int not null,
+    tnid int not null,
     customer_id int not null,
     receipt_number varchar(20) not null,
     category varchar(150) not null,
@@ -67,6 +67,6 @@ create table ciniki_donations (
     date_added datetime not null,
     last_updated datetime not null,
     primary key (id),
-    unique index (business_id, receipt_number),
-    index business_uuid (business_id, uuid, last_updated)
+    unique index (tnid, receipt_number),
+    index tenant_uuid (tnid, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.01';

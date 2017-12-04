@@ -8,18 +8,18 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business the donation is attached to.
+// tnid:     The ID of the tenant the donation is attached to.
 // donation_id:     The ID of the donation to get the details for.
 // 
 // Returns
 // -------
 //
-function ciniki_donations_donationLoad($ciniki, $business_id, $donation_id) {
+function ciniki_donations_donationLoad($ciniki, $tnid, $donation_id) {
     //
-    // Load the business intl settings
+    // Load the tenant intl settings
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $business_id);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $tnid);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -54,7 +54,7 @@ function ciniki_donations_donationLoad($ciniki, $business_id, $donation_id) {
         . "ciniki_donations.appraiser_address, "
         . "ciniki_donations.notes "
         . "FROM ciniki_donations "
-        . "WHERE ciniki_donations.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_donations.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_donations.id = '" . ciniki_core_dbQuote($ciniki, $donation_id) . "' "
         . "";
     

@@ -16,7 +16,7 @@ function ciniki_donations_donationReceipt(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'donation_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Donation'), 
 //      'output'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'pdf', 'name'=>'Output Type'),
         )); 
@@ -27,33 +27,33 @@ function ciniki_donations_donationReceipt(&$ciniki) {
 
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'donations', 'private', 'checkAccess');
-    $rc = ciniki_donations_checkAccess($ciniki, $args['business_id'], 'ciniki.donations.donationReceipt'); 
+    $rc = ciniki_donations_checkAccess($ciniki, $args['tnid'], 'ciniki.donations.donationReceipt'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }
 
     //
-    // Load business details
+    // Load tenant details
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'businessDetails');
-    $rc = ciniki_businesses_businessDetails($ciniki, $args['business_id']);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'tenantDetails');
+    $rc = ciniki_tenants_tenantDetails($ciniki, $args['tnid']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
     if( isset($rc['details']) && is_array($rc['details']) ) {   
-        $business_details = $rc['details'];
+        $tenant_details = $rc['details'];
     } else {
-        $business_details = array();
+        $tenant_details = array();
     }
 
     //
     // Load the donation settings
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');
-    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_donation_settings', 'business_id', $args['business_id'],
+    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_donation_settings', 'tnid', $args['tnid'],
         'ciniki.donations', 'settings', 'receipt');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -80,7 +80,7 @@ function ciniki_donations_donationReceipt(&$ciniki) {
     }
     $fn = $rc['function_call'];
 
-    return $fn($ciniki, $args['business_id'], $args['donation_id'],
-        $business_details, $donation_settings);
+    return $fn($ciniki, $args['tnid'], $args['donation_id'],
+        $tenant_details, $donation_settings);
 }
 ?>

@@ -2,14 +2,14 @@
 //
 // Description
 // -----------
-// This method will return the list of donations for a business.  It is restricted
-// to business owners and sysadmins.
+// This method will return the list of donations for a tenant.  It is restricted
+// to tenant owners and sysadmins.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business to get donations for.
+// tnid:     The ID of the tenant to get donations for.
 //
 // Returns
 // -------
@@ -20,7 +20,7 @@ function ciniki_donations_donationList($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'year'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'year'), 
         'category'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'category'), 
         ));
@@ -30,19 +30,19 @@ function ciniki_donations_donationList($ciniki) {
     $args = $rc['args'];
     
     //  
-    // Check access to business_id as owner, or sys admin. 
+    // Check access to tnid as owner, or sys admin. 
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'donations', 'private', 'checkAccess');
-    $ac = ciniki_donations_checkAccess($ciniki, $args['business_id'], 'ciniki.donations.donationList');
+    $ac = ciniki_donations_checkAccess($ciniki, $args['tnid'], 'ciniki.donations.donationList');
     if( $ac['stat'] != 'ok' ) { 
         return $ac;
     }   
 
     //
-    // Load the business intl settings
+    // Load the tenant intl settings
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -59,7 +59,7 @@ function ciniki_donations_donationList($ciniki) {
     //
     $strsql = "SELECT DISTINCT DATE_FORMAT(date_received, '%Y') AS year "
         . "FROM ciniki_donations "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "ORDER BY year DESC "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQueryList');
@@ -81,7 +81,7 @@ function ciniki_donations_donationList($ciniki) {
     //
     $strsql = "SELECT DISTINCT category "
         . "FROM ciniki_donations "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "ORDER BY category DESC "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQueryList');
@@ -112,7 +112,7 @@ function ciniki_donations_donationList($ciniki) {
             . "DATE_FORMAT(date_received, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS date_received, "
             . "amount "
             . "FROM ciniki_donations "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND date_received >= '" . ciniki_core_dbQuote($ciniki, $args['year']) . "-01-01' "
             . "AND date_received < '" . ciniki_core_dbQuote($ciniki, ($args['year']+1)) . "-01-01' "
             . "";

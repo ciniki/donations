@@ -2,13 +2,13 @@
 //
 // Description
 // -----------
-// This method will add a new donation for the business.
+// This method will add a new donation for the tenant.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business to add the donation to.
+// tnid:     The ID of the tenant to add the donation to.
 // name:            The name of the donation.
 // url:             (optional) The URL for the donation website.
 // description:     (optional) The description for the donation.
@@ -25,7 +25,7 @@ function ciniki_donations_donationAdd(&$ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'customer_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Customer'),
         'receipt_number'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Receipt Number'), 
         'category'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Category'), 
@@ -53,10 +53,10 @@ function ciniki_donations_donationAdd(&$ciniki) {
     $args = $rc['args'];
     
     //
-    // Check access to business_id as owner/employee
+    // Check access to tnid as owner/employee
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'donations', 'private', 'checkAccess');
-    $ac = ciniki_donations_checkAccess($ciniki, $args['business_id'], 'ciniki.donations.donationAdd');
+    $ac = ciniki_donations_checkAccess($ciniki, $args['tnid'], 'ciniki.donations.donationAdd');
     if( $ac['stat'] != 'ok' ) {
         return $ac;
     }
@@ -76,7 +76,7 @@ function ciniki_donations_donationAdd(&$ciniki) {
     //
     // Add the donation to the database
     //
-    $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.donations.donation', $args, 0x04);
+    $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.donations.donation', $args, 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.donations');
         return $rc;
@@ -92,17 +92,17 @@ function ciniki_donations_donationAdd(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'donations');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'donations');
 
     //
     // Load donation
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'donations', 'private', 'donationLoad');
-    $rc = ciniki_donations_donationLoad($ciniki, $args['business_id'], $donation_id);
+    $rc = ciniki_donations_donationLoad($ciniki, $args['tnid'], $donation_id);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }

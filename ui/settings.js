@@ -13,13 +13,13 @@ function ciniki_donations_settings() {
             }},
         'header':{'label':'Header Address Options', 'fields':{
             'receipt-header-contact-position':{'label':'Position', 'type':'toggle', 'default':'center', 'toggles':this.positionOptions},
-            'receipt-header-business-name':{'label':'Business Name', 'type':'toggle', 'default':'yes', 'toggles':this.toggleOptions},
-            'receipt-header-business-address':{'label':'Address', 'type':'toggle', 'default':'yes', 'toggles':this.toggleOptions},
-//          'receipt-header-business-phone':{'label':'Phone', 'type':'toggle', 'default':'yes', 'toggles':this.toggleOptions},
-//          'receipt-header-business-cell':{'label':'Cell', 'type':'toggle', 'default':'yes', 'toggles':this.toggleOptions},
-//          'receipt-header-business-fax':{'label':'Fax', 'type':'toggle', 'default':'yes', 'toggles':this.toggleOptions},
-//          'receipt-header-business-email':{'label':'Email', 'type':'toggle', 'default':'yes', 'toggles':this.toggleOptions},
-//          'receipt-header-business-website':{'label':'Website', 'type':'toggle', 'default':'yes', 'toggles':this.toggleOptions},
+            'receipt-header-tenant-name':{'label':'Tenant Name', 'type':'toggle', 'default':'yes', 'toggles':this.toggleOptions},
+            'receipt-header-tenant-address':{'label':'Address', 'type':'toggle', 'default':'yes', 'toggles':this.toggleOptions},
+//          'receipt-header-tenant-phone':{'label':'Phone', 'type':'toggle', 'default':'yes', 'toggles':this.toggleOptions},
+//          'receipt-header-tenant-cell':{'label':'Cell', 'type':'toggle', 'default':'yes', 'toggles':this.toggleOptions},
+//          'receipt-header-tenant-fax':{'label':'Fax', 'type':'toggle', 'default':'yes', 'toggles':this.toggleOptions},
+//          'receipt-header-tenant-email':{'label':'Email', 'type':'toggle', 'default':'yes', 'toggles':this.toggleOptions},
+//          'receipt-header-tenant-website':{'label':'Website', 'type':'toggle', 'default':'yes', 'toggles':this.toggleOptions},
             }},
         '_charity_info':{'label':'', 'fields':{
             'receipt-signing-officer':{'label':'Signing Officer', 'type':'text'},
@@ -34,7 +34,7 @@ function ciniki_donations_settings() {
             }},
     };
     this.main.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.donations.settingsHistory', 'args':{'business_id':M.curBusinessID, 'setting':i}};
+        return {'method':'ciniki.donations.settingsHistory', 'args':{'tnid':M.curTenantID, 'setting':i}};
     }
     this.main.fieldValue = function(s, i, d) {
         if( this.data[i] == null && d.default != null ) { return d.default; }
@@ -49,7 +49,7 @@ function ciniki_donations_settings() {
         return true;
     };
     this.main.open = function(cb) {
-        M.api.getJSONCb('ciniki.donations.settingsGet', {'business_id':M.curBusinessID}, function(rsp) {
+        M.api.getJSONCb('ciniki.donations.settingsGet', {'tnid':M.curTenantID}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -63,7 +63,7 @@ function ciniki_donations_settings() {
     this.main.save = function() {
         var c = this.serializeForm('no');
         if( c != '' ) {
-            M.api.postJSONCb('ciniki.donations.settingsUpdate', {'business_id':M.curBusinessID}, c, function(rsp) {
+            M.api.postJSONCb('ciniki.donations.settingsUpdate', {'tnid':M.curTenantID}, c, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;

@@ -10,12 +10,12 @@
 // Returns
 // -------
 //
-function ciniki_donations_templates_canadaDefault(&$ciniki, $business_id, $donation_id, $business_details, $settings) {
+function ciniki_donations_templates_canadaDefault(&$ciniki, $tnid, $donation_id, $tenant_details, $settings) {
     //
     // Get the receipt record
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'donations', 'private', 'donationLoad');
-    $rc = ciniki_donations_donationLoad($ciniki, $business_id, $donation_id);
+    $rc = ciniki_donations_donationLoad($ciniki, $tnid, $donation_id);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -33,7 +33,7 @@ function ciniki_donations_templates_canadaDefault(&$ciniki, $business_id, $donat
         public $header_addr = array();
         public $header_details = array();
         public $header_height = 0;      // The height of the image and address
-        public $business_details = array();
+        public $tenant_details = array();
         public $settings = array();
 
         public function Header() {
@@ -187,81 +187,81 @@ function ciniki_donations_templates_canadaDefault(&$ciniki, $business_id, $donat
     $pdf = new MYPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
     //
-    // Figure out the header business name and address information
+    // Figure out the header tenant name and address information
     //
     $pdf->header_height = 0;
     $pdf->header_name = '';
     if( !isset($settings['receipt-header-contact-position'])
         || $settings['receipt-header-contact-position'] != 'off' ) {
-        if( !isset($settings['receipt-header-business-name'])
-            || $settings['receipt-header-business-name'] == 'yes' ) {
-            $pdf->header_name = $business_details['name'];
+        if( !isset($settings['receipt-header-tenant-name'])
+            || $settings['receipt-header-tenant-name'] == 'yes' ) {
+            $pdf->header_name = $tenant_details['name'];
             $pdf->header_height = 8;
         }
-        if( !isset($settings['receipt-header-business-address'])
-            || $settings['receipt-header-business-address'] == 'yes' ) {
-            if( isset($business_details['contact.address.street1']) 
-                && $business_details['contact.address.street1'] != '' ) {
-                $pdf->header_addr[] = $business_details['contact.address.street1'];
+        if( !isset($settings['receipt-header-tenant-address'])
+            || $settings['receipt-header-tenant-address'] == 'yes' ) {
+            if( isset($tenant_details['contact.address.street1']) 
+                && $tenant_details['contact.address.street1'] != '' ) {
+                $pdf->header_addr[] = $tenant_details['contact.address.street1'];
             }
-            if( isset($business_details['contact.address.street2']) 
-                && $business_details['contact.address.street2'] != '' ) {
-                $pdf->header_addr[] = $business_details['contact.address.street2'];
+            if( isset($tenant_details['contact.address.street2']) 
+                && $tenant_details['contact.address.street2'] != '' ) {
+                $pdf->header_addr[] = $tenant_details['contact.address.street2'];
             }
             $city = '';
-            if( isset($business_details['contact.address.city']) 
-                && $business_details['contact.address.city'] != '' ) {
-                $city .= $business_details['contact.address.city'];
+            if( isset($tenant_details['contact.address.city']) 
+                && $tenant_details['contact.address.city'] != '' ) {
+                $city .= $tenant_details['contact.address.city'];
             }
-            if( isset($business_details['contact.address.province']) 
-                && $business_details['contact.address.province'] != '' ) {
+            if( isset($tenant_details['contact.address.province']) 
+                && $tenant_details['contact.address.province'] != '' ) {
                 $city .= ($city!='')?', ':'';
-                $city .= $business_details['contact.address.province'];
+                $city .= $tenant_details['contact.address.province'];
             }
-            if( isset($business_details['contact.address.postal']) 
-                && $business_details['contact.address.postal'] != '' ) {
+            if( isset($tenant_details['contact.address.postal']) 
+                && $tenant_details['contact.address.postal'] != '' ) {
                 $city .= ($city!='')?'  ':'';
-                $city .= $business_details['contact.address.postal'];
+                $city .= $tenant_details['contact.address.postal'];
             }
             if( $city != '' ) {
                 $pdf->header_addr[] = $city;
             }
         }
-/*      if( !isset($settings['receipt-header-business-phone'])
-            || $settings['receipt-header-business-phone'] == 'yes' ) {
-            if( isset($business_details['contact.phone.number']) 
-                && $business_details['contact.phone.number'] != '' ) {
-                $pdf->header_addr[] = 'phone: ' . $business_details['contact.phone.number'];
+/*      if( !isset($settings['receipt-header-tenant-phone'])
+            || $settings['receipt-header-tenant-phone'] == 'yes' ) {
+            if( isset($tenant_details['contact.phone.number']) 
+                && $tenant_details['contact.phone.number'] != '' ) {
+                $pdf->header_addr[] = 'phone: ' . $tenant_details['contact.phone.number'];
             }
-            if( isset($business_details['contact.tollfree.number']) 
-                && $business_details['contact.tollfree.number'] != '' ) {
-                $pdf->header_addr[] = 'phone: ' . $business_details['contact.tollfree.number'];
-            }
-        }
-        if( !isset($settings['receipt-header-business-cell'])
-            || $settings['receipt-header-business-cell'] == 'yes' ) {
-            if( isset($business_details['contact.cell.number']) 
-                && $business_details['contact.cell.number'] != '' ) {
-                $pdf->header_addr[] = 'cell: ' . $business_details['contact.cell.number'];
+            if( isset($tenant_details['contact.tollfree.number']) 
+                && $tenant_details['contact.tollfree.number'] != '' ) {
+                $pdf->header_addr[] = 'phone: ' . $tenant_details['contact.tollfree.number'];
             }
         }
-        if( (!isset($settings['receipt-header-business-fax'])
-            || $settings['receipt-header-business-fax'] == 'yes')
-            && isset($business_details['contact.fax.number']) 
-            && $business_details['contact.fax.number'] != '' ) {
-            $pdf->header_addr[] = 'fax: ' . $business_details['contact.fax.number'];
+        if( !isset($settings['receipt-header-tenant-cell'])
+            || $settings['receipt-header-tenant-cell'] == 'yes' ) {
+            if( isset($tenant_details['contact.cell.number']) 
+                && $tenant_details['contact.cell.number'] != '' ) {
+                $pdf->header_addr[] = 'cell: ' . $tenant_details['contact.cell.number'];
+            }
         }
-        if( (!isset($settings['receipt-header-business-email'])
-            || $settings['receipt-header-business-email'] == 'yes')
-            && isset($business_details['contact.email.address']) 
-            && $business_details['contact.email.address'] != '' ) {
-            $pdf->header_addr[] = $business_details['contact.email.address'];
+        if( (!isset($settings['receipt-header-tenant-fax'])
+            || $settings['receipt-header-tenant-fax'] == 'yes')
+            && isset($tenant_details['contact.fax.number']) 
+            && $tenant_details['contact.fax.number'] != '' ) {
+            $pdf->header_addr[] = 'fax: ' . $tenant_details['contact.fax.number'];
         }
-        if( (!isset($settings['receipt-header-business-website'])
-            || $settings['receipt-header-business-website'] == 'yes')
-            && isset($business_details['contact-website-url']) 
-            && $business_details['contact-website-url'] != '' ) {
-            $pdf->header_addr[] = $business_details['contact-website-url'];
+        if( (!isset($settings['receipt-header-tenant-email'])
+            || $settings['receipt-header-tenant-email'] == 'yes')
+            && isset($tenant_details['contact.email.address']) 
+            && $tenant_details['contact.email.address'] != '' ) {
+            $pdf->header_addr[] = $tenant_details['contact.email.address'];
+        }
+        if( (!isset($settings['receipt-header-tenant-website'])
+            || $settings['receipt-header-tenant-website'] == 'yes')
+            && isset($tenant_details['contact-website-url']) 
+            && $tenant_details['contact-website-url'] != '' ) {
+            $pdf->header_addr[] = $tenant_details['contact-website-url'];
         }
 */
     }
@@ -279,14 +279,14 @@ function ciniki_donations_templates_canadaDefault(&$ciniki, $business_id, $donat
     //
     if( isset($settings['receipt-header-image']) && $settings['receipt-header-image'] > 0 ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'images', 'private', 'loadImage');
-        $rc = ciniki_images_loadImage($ciniki, $business_id, 
+        $rc = ciniki_images_loadImage($ciniki, $tnid, 
             $settings['receipt-header-image'], 'original');
         if( $rc['stat'] == 'ok' ) {
             $pdf->header_image = $rc['image'];
         }
     }
 
-    $pdf->business_details = $business_details;
+    $pdf->tenant_details = $tenant_details;
     $pdf->settings = $settings;
 
     //
@@ -304,7 +304,7 @@ function ciniki_donations_templates_canadaDefault(&$ciniki, $business_id, $donat
     // Setup the PDF basics
     //
     $pdf->SetCreator('Ciniki');
-    $pdf->SetAuthor($business_details['name']);
+    $pdf->SetAuthor($tenant_details['name']);
     $pdf->SetTitle('Receipt #' . $donation['receipt_number']);
     $pdf->SetSubject('');
     $pdf->SetKeywords('');
