@@ -79,10 +79,13 @@ function ciniki_donations_donationList($ciniki) {
     //
     // Get the categories
     //
-    $strsql = "SELECT DISTINCT category "
+    $strsql = "SELECT DISTINCT IF(category='', '?', category) as category "
         . "FROM ciniki_donations "
-        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
-        . "ORDER BY category DESC "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' ";
+    if( isset($args['year']) && $args['year'] != '' ) {
+        $strsql .= "AND YEAR(date_received) = '" . ciniki_core_dbQuote($ciniki, $args['year']) . "' ";
+    }
+    $strsql .= "ORDER BY category DESC "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQueryList');
     $rc = ciniki_core_dbQueryList($ciniki, $strsql, 'ciniki.donations', 'categories', 'category');
