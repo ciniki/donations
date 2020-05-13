@@ -37,6 +37,7 @@ function ciniki_donations_main() {
         if( s == 'donations' ) { return d.donation[this.sections[s].sortMaps[j]]; }
     };
     this.menu.rowFn = function(s, i, d) {
+        if( d == null ) { return ''; }
         return 'M.ciniki_donations_main.donation.open(\'M.ciniki_donations_main.menu.open();\',\'' + d.donation.id + '\');';
     };
     this.menu.footerValue = function(s, i, d) {
