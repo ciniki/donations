@@ -243,16 +243,15 @@ function ciniki_donations_main() {
     }
     this.donation.remove = function(did) {
         if( did <= 0 ) { return false; }
-        if( confirm("Are you sure you want to remove this donation?") ) {
-            M.api.getJSONCb('ciniki.donations.donationDelete', {'tnid':M.curTenantID,
-                'donation_id':did}, function(rsp) {
-                    if( rsp.stat != 'ok' ) {
-                        M.api.err(rsp);
-                        return false;
-                    }
-                    M.ciniki_donations_main.donation.close();
-                });
-        }
+        M.confirm("Are you sure you want to remove this donation?",null,function() {
+            M.api.getJSONCb('ciniki.donations.donationDelete', {'tnid':M.curTenantID, 'donation_id':did}, function(rsp) {
+                if( rsp.stat != 'ok' ) {
+                    M.api.err(rsp);
+                    return false;
+                }
+                M.ciniki_donations_main.donation.close();
+            });
+        });
     }
     this.donation.receipt = function() {
         if( this.donation_id > 0 ) {
@@ -291,7 +290,7 @@ function ciniki_donations_main() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_donations_main', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 
