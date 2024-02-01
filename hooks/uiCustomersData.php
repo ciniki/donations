@@ -70,6 +70,7 @@ function ciniki_donations_hooks_uiCustomersData($ciniki, $tnid, $args) {
     $rsp['tabs'][] = array(
         'id' => 'ciniki.donations.donors',
         'label' => 'Donations',
+        'priority' => 2000,
         'sections' => $sections,
         );
 
